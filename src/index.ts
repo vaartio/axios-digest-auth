@@ -83,6 +83,7 @@ export default class AxiosDigestAuth {
         response,
         nc: nonceCount,
         cnonce,
+        opaque: parsedAuthorization.params['opaque'] as string,
       };
 
       const paramsString = Object.entries(params).map(([key, value]) =>  `${key}=${value && quote(value)}`).join(', ');
