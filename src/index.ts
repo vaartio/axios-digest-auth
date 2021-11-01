@@ -10,8 +10,8 @@ const quote = (str: string): string => `"${str.replace(/"/g, '\\"')}"`;
  * Options to configure the AxiosDigestAuth instance.
  */
 export interface AxiosDigestAuthOpts {
-  /** 
-   * optionally provide your own axios instance. if this is not provided, one will be created for 
+  /**
+   * optionally provide your own axios instance. if this is not provided, one will be created for
    * you with default settings.
    */
   axios?: axios.AxiosInstance;
@@ -61,7 +61,12 @@ export default class AxiosDigestAuth {
       const nonce = takeFirst(parsedAuthorization.params['nonce']);
 
       const ha1 = crypto.createHash('md5').update(`${this.username}:${realm}:${this.password}`).digest('hex');
-      const path = url.parse(opts.url!).pathname;
+      const urlParams = opts.params
+        ? '?' + Object.keys(opts.params)
+        .map((key) => key + '=' + opts.params[key])
+        .join('&')
+        : '';
+      const path = `${url.parse(opts.url!).pathname}${urlParams}`;
       const ha2 = crypto.createHash('md5').update(`${opts.method ?? "GET"}:${path}`).digest('hex');
       const response = crypto.createHash('md5').update(`${ha1}:${nonce}:${nonceCount}:${cnonce}:auth:${ha2}`).digest('hex');
 
